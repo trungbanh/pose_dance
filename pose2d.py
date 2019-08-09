@@ -6,9 +6,18 @@ POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,14], [14,8], [
 nPoints = 15
 
 
-def get_pose(frame, net):
+def cut_frame(img):
+    ret, thresh = cv2.threshold(img, 127, 255, 0)
+    contours, hierarchy = cv2.findContours(thresh,
+                                           cv2.RETR_TREE,
+                                           cv2.CHAIN_APPROX_SIMPLE)
+    x, y, w, h = cv2.boundingRect(contours[0])
+    newimg = np.array(img)
+    newimg = newimg[y-10:y+h+10, x-10:x+w+10]
+    return newimg
 
-    # net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
+
+def get_pose(frame, net):
 
     frameWidth = frame.shape[1]
     frameHeight = frame.shape[0]
@@ -48,7 +57,13 @@ def get_pose(frame, net):
             cv2.line(frameCopy, points[partA], points[partB], (0, 255, 255), 2)
             cv2.circle(frameCopy, points[partA], 1, (0, 0, 255), thickness=1, lineType=cv2.FILLED)
 
-    frameCopy = cv2.resize(frameCopy,(250, 700))
-    frameCopy = np.array(frameCopy,np.float32).flatten()
+    # print(frameCopy.shape)
+    # cv2.imshow('thu hinh', frameCopy)
+    # cv2.waitKey(0)
+    frameCopy = cv2.convertScaleAbs(frameCopy)
+    frameCopy = cv2.cvtColor(frameCopy, cv2.COLOR_BGR2GRAY)
+    img = cut_frame(frameCopy)
+    img = cv2.resize(img,(250, 700))
+    img = np.array(img,np.float32).flatten()
 
-    return frameCopy
+    return img

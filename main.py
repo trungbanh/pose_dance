@@ -7,6 +7,8 @@ import os
 from knn import predict
 import numpy as np
 import pickle
+from pose2d import get_pose
+from classify import model
 
 
 detection_graph, sess = detector_utils.load_inference_graph()
@@ -17,6 +19,8 @@ weightsFile = "pose/mpi/pose_iter_160000.caffemodel"
 POSE_PAIRS = [[0,1], [1,2], [2,3], [3,4], [1,5], [5,6], [6,7], [1,14], [14,8], [8,9], [9,10], [14,11], [11,12], [12,13] ]
 
 nPoints = 15
+
+net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
 with open('pca.pkl', 'rb') as file:
     myPCA = pickle.load(file)
@@ -60,30 +64,23 @@ def draw_box_on_image(num_hands_detect, score_thresh, scores, boxes, im_width,
 def annotation(video_source=0, width=320, height=180,
                score_thresh=0.2, display=1, fps=1):
 
-    # cap = cv2.VideoCapture(video_source)
-    # cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-    # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-
-    start_time = datetime.datetime.now()
-    num_frames = 0
-    # im_width, im_height = (cap.get(3), cap.get(4))
-
     im_width, im_height = (1920, 1080)
-
     # max number of hands we want to detect/track
     num_hands_detect = 2
-
     cv2.namedWindow('Single-Threaded Detection', cv2.WINDOW_NORMAL)
 
-    images = getImages()
+    knn = model()
 
+    images = getImages()
     for image in images:
         # Expand dimensions since the model expects images to
-        # have shape: [1, None, None, 3]
-        # ret, image_np = cap.read()
         image_np = cv2.imread(image)
+        pose = get_pose(image_np, net)
 
-        # image_np = cv2.flip(image_np, 1)
+        ret, results, neighbours, dist = knn.findNearest(np.array([pose], np.float32), 3)
+
+        cv2.putText(image_np, str(results),(100,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
         try:
             image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
         except:
@@ -100,7 +97,6 @@ def annotation(video_source=0, width=320, height=180,
             if cv2.waitKey(0) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
-
 
 annotation()
 

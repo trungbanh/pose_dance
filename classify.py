@@ -40,23 +40,9 @@ def get_data():
     return np.array(data, np.float32), np.array(labels)
 
 
-data, labels = get_data()
-
-labels = np.reshape(labels, (1, -1))
-
-print(data.shape)
-
-# print(labels.shape)
-knn = cv2.ml.KNearest_create()
-knn.train(data, cv2.ml.ROW_SAMPLE, labels)
-
-
-testchoi = cv2.imread('testchoi.png', 0)
-
-testchoi = np.array(testchoi, np.float32).flatten()
-ret, results, neighbours, dist = knn.findNearest(np.array([testchoi]), 3)
-
-
-print("result:  {}\n".format(results))
-print("neighbours:  {}\n".format(neighbours))
-print("distance:  {}\n".format(dist))
+def model():
+    data, labels = get_data()
+    labels = np.reshape(labels, (1, -1))
+    knn = cv2.ml.KNearest_create()
+    knn.train(data, cv2.ml.ROW_SAMPLE, labels)
+    return knn
