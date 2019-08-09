@@ -1,0 +1,6 @@
+hand_inference_graph/
+__pycache__/
+pose/
+testdata/
+knn.pkl
+pca.pkl
