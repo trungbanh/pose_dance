@@ -18,7 +18,13 @@ def cut_frame(img):
 
 
 def get_pose(frame, net):
+    '''
+        foots[] = 0 khong co chan
+              = 1 chan phai co len
+              = 2 chan trai co len
+    '''
 
+    foots = [0,0]
     frameWidth = frame.shape[1]
     frameHeight = frame.shape[0]
     aspect_ratio = frameWidth/frameHeight
@@ -38,7 +44,7 @@ def get_pose(frame, net):
         # confidence map of corresponding body's part.
         probMap = output[0, i, :, :]
         probMap = cv2.resize(probMap, (frameWidth, frameHeight))
-    
+
         # Find global maxima of the probMap.
         minVal, prob, minLoc, point = cv2.minMaxLoc(probMap)
     
@@ -52,18 +58,19 @@ def get_pose(frame, net):
     for pair in POSE_PAIRS:
         partA = pair[0]
         partB = pair[1]
-
         if points[partA] and points[partB]:
             cv2.line(frameCopy, points[partA], points[partB], (0, 255, 255), 2)
             cv2.circle(frameCopy, points[partA], 1, (0, 0, 255), thickness=1, lineType=cv2.FILLED)
 
-    # print(frameCopy.shape)
-    # cv2.imshow('thu hinh', frameCopy)
-    # cv2.waitKey(0)
+            if partA == 9 and partB == 10 :
+                foots[0] = 1
+            elif partA == 12 and partB == 13 :
+                foots[1] = 1
+
     frameCopy = cv2.convertScaleAbs(frameCopy)
     frameCopy = cv2.cvtColor(frameCopy, cv2.COLOR_BGR2GRAY)
     img = cut_frame(frameCopy)
     img = cv2.resize(img,(250, 700))
     img = np.array(img,np.float32).flatten()
 
-    return img
+    return img, foots

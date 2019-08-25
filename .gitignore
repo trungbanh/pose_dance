@@ -2,5 +2,12 @@ hand_inference_graph/
 __pycache__/
 pose/
 testdata/
+knowledge
+bodyposture
+
 knn.pkl
 pca.pkl
+nn.pkl
+lda.pkl
+data1.jpg
+Untitled.ipynb

@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import os
+from sklearn.neural_network import MLPClassifier
+import pickle
 
 LABEL = {
     "ca_2_tay_chap_vao_hong_phai": 1,
@@ -40,9 +42,15 @@ def get_data():
     return np.array(data, np.float32), np.array(labels)
 
 
-def model():
-    data, labels = get_data()
-    labels = np.reshape(labels, (1, -1))
-    knn = cv2.ml.KNearest_create()
-    knn.train(data, cv2.ml.ROW_SAMPLE, labels)
-    return knn
+# def model():
+#     data, labels = get_data()
+#     labels = np.reshape(labels, (1, -1))
+#     knn = cv2.ml.KNearest_create()
+#     knn.train(data, cv2.ml.ROW_SAMPLE, labels)
+#     return knn
+
+
+def peceptron ():
+    with open('nn.plk','rb') as file:
+        model = pickle.load(file)
+    return model
