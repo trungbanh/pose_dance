@@ -78,54 +78,53 @@ def annotation(video_source=0, width=320, height=180,
 
     model = peceptron()
 
-    images = getImages()
-    for image in images:
-    # video = cv2.VideoCapture("Khmer-Chol-Chnam-Thmay.webm")
-        num = 0
-    # while (True):
+    # images = getImages()
+    # for image in images:
+    video = cv2.VideoCapture("Khmer-Chol-Chnam-Thmay.webm")
+    num = 0
+    while (True):
         # Expand dimensions since the model expects images to
-        image_np = cv2.imread(image)
-        # ret, image_np = video.read()
+        # image_np = cv2.imread(image)
+        ret, image_np = video.read()
         
         num = num+1
-        # if num >= 128 and num % 3 == 0:
-            # print(num)
+        if num >= 128 and num % 3 == 0:
+            print(num)
 
-        pose, foots = get_pose(image_np, net)
+            pose, foots = get_pose(image_np, net)
 
-        # ret, results, neighbours, dist = knn.findNearest(np.array([pose], np.float32), 3)
-        result = model.predict([pose])
+            # ret, results, neighbours, dist = knn.findNearest(np.array([pose], np.float32), 3)
+            result = model.predict([pose])
 
-        # cv2.putText(image_np, str(results),(100,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            # cv2.putText(image_np, str(results),(100,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
-        try:
-            image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
-        except:
-            print("Error converting to RGB")
-        boxes, scores = detector_utils.detect_objects(image_np,
-                                                    detection_graph, sess)
-        # draw bounding boxes on frame
-        hands = draw_box_on_image(num_hands_detect, score_thresh,
-                                scores, boxes, im_width, im_height,
-                                image_np)
-        if (display > 0):
-            cv2.imshow('Single-Threaded Detection',
-                        cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR))
-            if cv2.waitKey(0) & 0xFF == ord('q'):
-                cv2.destroyAllWindows()
-                break
-        frame = {
-            "number": num,
-            "foots": foots,
-            "pose": int(result[0]),
-            "hands": hands
-        }
-        json.dump(frame,jsonfile)
-        jsonfile.write(",\n")
+            try:
+                image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+            except:
+                print("Error converting to RGB")
+            boxes, scores = detector_utils.detect_objects(image_np,
+                                                        detection_graph, sess)
+            # draw bounding boxes on frame
+            hands = draw_box_on_image(num_hands_detect, score_thresh,
+                                    scores, boxes, im_width, im_height,
+                                    image_np)
+            # if (display > 0):
+            #     cv2.imshow('Single-Threaded Detection',
+            #                 cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR))
+            #     if cv2.waitKey(0) & 0xFF == ord('q'):
+            #         cv2.destroyAllWindows()
+            #         break
+            frame = {
+                "number": num,
+                "foots": foots,
+                "pose": int(result[0]),
+                "hands": hands
+            }
+            json.dump(frame,jsonfile)
+            jsonfile.write(",\n")
             
-    # video.release()
+    video.release()
     print ("okey chưa")
-
 
 annotation()
 
