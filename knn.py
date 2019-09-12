@@ -6,7 +6,8 @@ import pickle
 CLASSIFY = {
     'fruit': 1,
     'lead': 2,
-    'pray': 3
+    'pray': 3,
+    'rice': 4
 }
 
 
