@@ -88,7 +88,7 @@ def annotation(video_source=0, width=320, height=180,
         ret, image_np = video.read()
         
         num = num+1
-        if num >= 128 and num % 3 == 0:
+        if num >= 128 and num % 15 == 0:
             print(num)
 
             pose, foots = get_pose(image_np, net)
