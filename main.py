@@ -1,6 +1,5 @@
 from utils import detector_utils as detector_utils
 import cv2
-import tensorflow as tf
 import datetime
 import argparse
 import os

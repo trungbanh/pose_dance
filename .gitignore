@@ -10,5 +10,6 @@ pca.pkl
 nn.plk
 lda.pkl
 data1.jpg
+vidu.py
 
 *.json
